@@ -21,8 +21,6 @@ __pycache__/
 
 # Django
 *.log
-media/
-static/
 
 # Environment variables
 .env
