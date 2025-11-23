@@ -1,0 +1,72 @@
+{% extends 'navigation.html' %}
+{% load tags %}
+{% block content %}
+{% load static %}
+
+
+<div class="body-content-update-profile">
+  <div class="top-body">
+  <div class="update-form">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="profile-row">
+            <label class="form-label">{{ field.label }}</label>
+            <div class="form-field">
+                {{ field }}
+            </div>
+        </div>
+      {% endfor %}
+      <button class="btn btn-outline-dark btn-lg" type="submit" name="action" value="save_updates">обновить</button>
+    </form>
+  </div>
+
+
+  <!-- Представление профиля -->
+  <div class="product-image">
+    <h2>{{ profile.user }}</h2>
+    <img src="{{ profile.avatar.url }}" width="300">
+  </div>
+  </div>
+
+    <!-- Вывод сообщения об успешной авторизации -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="attentions">
+                    <!-- Вывод общих ошибок формы -->
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                        {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Вывод ошибок для конкретных полей -->
+                    {% for field in form %}
+                    {% if field.errors %}
+                    <div class="alert alert-warning">
+                        <ul class="mb-0 mt-2">
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+</div>
+<script src="{% static 'JS/reload_page.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'navigation.html' %}
+{% load tags %}
+{% block content %}
+{% load static %}
+<div class="body-content-day-detail">
+
+    <!-- левая панель -->
+    <div class="left-panel-day-detail">
+        <div class="products-container">
+            {% for product in products %}
+                <div class="product-row">
+                    <form method="POST" class="d-flex align-items-center gap-2">
+                        {% csrf_token %}
+                        {{ forms|get_item:product.id|safe }}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <button class="btn btn-outline-secondary" type="submit" name="action" value="add_product">+</button>
+                        <a class="product-link" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- центральная панель -->
+    <div class="center-panel-day-detail">
+        <div class="calendar">
+            <table class="table-info">
+                <thead class="calendar-title">
+                    <tr>
+                        <th>Пн</th>
+                        <th>Вт</th>
+                        <th>Ср</th>
+                        <th>Чт</th>
+                        <th>Пт</th>
+                        <th>Сб</th>
+                        <th>Вс</th>
+                    </tr>
+                </thead>
+            <tbody>
+            {% for week in month_cal %}
+                <tr>
+                    {% for day in week %}
+                        <td class="day">
+                            {% if day > 0 %}
+                                {% with day_instance=days|get_item:day %}
+                                    <a class="day-link" href="{{ day_instance.get_absolute_url }}">
+                                        <span class="day-text">{{ day }}</span>
+                                    </a>
+                                {% endwith %}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        <br>
+
+        <div class="day-summary">
+            <h2>{{ day_title }}</h2>
+            <div class="month-results-day-detail">
+                    <div class="figure-day-detail">
+                        <p>Белки</p>
+                        <p>{{ day.proteins }}</p>
+                    </div>
+                    <div class="figure-day-detail">
+                        <p>Жиры</p>
+                        <p>{{ day.fats }}</p>
+                    </div>
+                    <div class="figure-day-detail">
+                        <p>Углеводы</p>
+                        <p>{{ day.carbohydrates }}</p>
+                    </div>
+                    <div class="figure-day-detail">
+                        <p>Ккал</p>
+                        <p>{{ day.calories }}</p>
+                    </div>
+                </div>
+
+            <div class="product-button">
+                <form method="POST" >
+                    {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <button class="btn btn-outline-secondary" type="submit" name="action" value="reset_day">
+                            Сбросить результаты дня</button>
+                </form>
+            </div>
+        </div>
+        <div class="weight-user">
+            <span class="weight-user-title">вес</span>
+            <b class="weight">{{ day.user_weight }}</b>
+            <form method="POST">
+                {% csrf_token %}
+                {{ forms.user_weight }}
+                <button class="btn btn-outline-secondary" type="submit" name='action' value="input_weight">Изменить</button>
+            </form>
+
+        </div>
+        <br>
+        <br>
+        <form class='create-product' method="POST">
+            {% csrf_token %}
+            <button class="btn btn-outline-secondary" type="submit" name="action" value="create_product">Создать продукт</button>
+        </form>
+    </div>
+
+    <!-- правая панель -->
+    <div class="right-panel-day-detail">
+        <div class="day-products">
+            {% for day_product in day_products %}
+                <form method="post">
+                    {% csrf_token %}
+                    <span class="day-product-row">
+                        <input type="hidden" name="day_product_id" value="{{ day_product.id }}">
+                        <button class="btn btn-outline-secondary" type="submit" name="action" value="delete_product">-</button>
+                        <a class="day-product-link" href="{{ day_product.product.get_absolute_url }}">
+                            {{ day_product.product }}</a> {{ day_product.weight }}г {{ day_product.calories }} Ккал
+                    </span>
+                </form>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script src="{% static 'JS/reload_page.js' %}"></script>
+<script src="{% static 'JS/product-weight-input.js' %}"></script>
+{% endblock %}

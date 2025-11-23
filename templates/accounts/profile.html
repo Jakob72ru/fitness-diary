@@ -1,0 +1,158 @@
+{% extends "navigation.html" %}
+{% load static %}
+{% block title %}Profile Page{% endblock title %}
+{% block content %}
+
+    <div class="profile-content">
+        <br>
+        <div class="profile-block">
+            <form method="post" enctype="multipart/form-data" action="{% url 'update_avatar' %}">
+            {% csrf_token %}
+            <div class="avatar-container">
+                <img src="{{ user.profile.avatar.url }}" class="profile-avatar">
+                <div class="avatar-overlay">
+                    <label for="avatarUpload" class="upload-label">
+                        загрузить
+                        <input type="file" name="avatar" id="avatarUpload" accept="image/*"
+                               onchange="this.form.submit()" style="display: none;">
+                    </label>
+                </div>
+            </div>
+        </form>
+            <div class="profile-block-container">
+                <div class="profile-username-block">
+                    <h2> {{ user.username}} </h2>
+                    <span>/</span>
+                    <div class="submit-text">
+                        <button type="button" form="month-results" class="btn-link"
+                        onclick="location.href='{% url 'edit_profile' slug=profile.slug %}'">изменить</button>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="profile-info-container">
+                    <div class="profile-info">
+                        {% if user.profile.name %}
+                            <strong>имя</strong>
+                        {% endif %}
+                        <strong>пол </strong>
+                        <strong>возраст </strong>
+                        <strong>дата рождения</strong>
+                        <strong>рост </strong>
+                        <strong>вес </strong>
+                        <strong>зарегистрирован </strong>
+                    </div>
+                    <div class="profile-info">
+                        {% if user.profile.name %}
+                            <span>{{ user.profile.name }} {{ user.profile.surname }}</span>
+                        {% endif %}
+                        <span>{{ user.profile.gender }}</span>
+                        <span>{{ user.profile.age }}</span>
+                        <span>{{ user.profile.birthday|date:"j.m.Y" }}</span>
+                        <span>{{ user.profile.height }}</span>
+                        <span>{{ user.profile.weight }}</span>
+                        <span>{{ user.date_joined|date:"j.m.Y" }}</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <!-- блок результатов -->
+        <div class="result-header">
+            <strong>целевые показатели</strong>
+            <span>/</span>
+            <div class="submit-text">
+                <button type="button" form="month-results" class="btn-link"
+                        data-bs-toggle="modal" data-bs-target="#confirmModal">изменить</button>
+            </div>
+        </div>
+            <form id="month-results" class="month-results" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save_edit">
+                    <div class="my-figure">
+                        <p>Белки</p>
+                        <input class="form-control edit-input" type="number" name="proteins"
+                               value="{{ user.profile.proteins }}" tabindex="2">
+                    </div>
+                    <div class="my-figure">
+                        <p>Жиры</p>
+                        <input class="form-control edit-input" type="number" name="fats"
+                               value="{{ user.profile.fats }}" tabindex="2">
+                    </div>
+                    <div class="my-figure">
+                        <p>Углеводы</p>
+                        <input class="form-control edit-input" type="number" name="carbohydrates"
+                               value="{{ user.profile.carbohydrates }}" tabindex="2">
+                    </div>
+                    <div class="my-figure">
+                        <p>Ккал</p>
+                        <input class="form-control edit-input" type="number" name="calories"
+                               value="{{ user.profile.calories }}" tabindex="2">
+                    </div>
+                    <div class="my-figure">
+                        <p>Вес</p>
+                        <input class="form-control edit-input" type="number" name="aim_weight"
+                               value="{{ user.profile.aim_weight }}" tabindex="2">
+                    </div>
+                </form>
+        <br>
+        <!-- СЕТКА ИЗ 365 КНОПКИ -->
+        <strong>активность за последний год</strong>
+
+        <div class="buttons-grid-container">
+            <div class="months-header">
+                {% for month in months_data %}
+                    <div class="month-label" style="grid-column-start: {{ month.start_column }}">
+                        {{ month.name }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="buttons-grid">
+                {% for day in days %}
+                    <button type="button" class="grid-btn" data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="{{ day.date }}"  style="background-color:{{ day.color }}"
+                            onclick="location.href='{% url 'day_detail' slug=day.object.slug %}'"></button>
+                {% endfor %}
+            </div>
+            <div class="grid-summary">
+                <div class="summary-block">
+                    <strong>{{ streak }}</strong>
+                    <span class="text-summary">дней без перерыва</span>
+                </div>
+                <div class="summary-block">
+                    <strong>{{ max_streak }}</strong>
+                    <span class="text-summary">дней без перерыва (макс.)</span>
+                </div>
+                <div class="summary-block">
+                    <strong>{{ nonempty }}</strong>
+                    <span class="text-summary">дней добавлено всего</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+<!-- Подтверждение изменения показателей -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Подтверждение</h5>
+            </div>
+            <div class="modal-body">
+                Вы хотите изменить целевые показатели?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button autofocus type="button" class="btn btn-primary" id="confirmSave">Да, изменить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="{% static 'JS/confirm_save.js' %}"></script>
+<script src="{% static 'JS/reload_page.js' %}"></script>
+{% endblock content %}

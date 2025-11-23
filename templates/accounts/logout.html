@@ -1,0 +1,30 @@
+{% extends 'navigation.html' %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 100px auto; padding: 20px; text-align: center;">
+    <h2>Выход из системы</h2>
+    <p style="margin: 20px 0;">Вы уверены, что хотите выйти?</p>
+    
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" style="
+            background: #dc3545; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            margin-right: 10px;
+            cursor: pointer;">
+            Выйти
+        </button>
+        <a href="/" style="
+            background: #6c757d; 
+            color: white; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            text-decoration: none;">
+            На главную
+        </a>
+    </form>
+</div>
+{% endblock %}

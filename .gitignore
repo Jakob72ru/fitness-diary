@@ -1,0 +1,35 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Database
+db.sqlite3
+*.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.python-version
+
+# Django
+*.log
+media/
+static/
+
+# Environment variables
+.env
+*.env
+
+# Server files
+gunicorn.sh
+Fitness_diary/gunicorn_config.py
+*.swp
+.*.swp

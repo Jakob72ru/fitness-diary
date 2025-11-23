@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page_title }}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" href="{% static 'fd4.ico' %}">
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% now 'Y-m-d' as current_date %}
+</head>
+<body>
+    <nav class="navbar">
+        <!-- Логотип -->
+        <a class="nav-logo" href="{% url 'main' selected_day %}">
+            <img src="{% static 'logo.png' %}" alt="Logo">
+        </a>
+
+        <!-- Ссылка "все продукты" -->
+        <a class="nav-item" href="{% url 'products' selected_day %}">все продукты</a>
+
+        <!-- Центральная зона: поиск -->
+            <div class="search-wrap position-relative d-flex align-items-center h-100 px-3">
+                <form id="search-form" autocomplete="off" method="get" action="#" class="w-100">
+                    <div class="input-group w-100">
+                        <input id="search-input" name="q" class="form-control" type="text" placeholder="Поиск…"
+                               autocomplete="off" tabindex="1">
+                    </div>
+                </form>
+
+                <!-- РЕЗУЛЬТАТЫ -->
+                <div id="search-results" class="list-group position-absolute w-100">
+                <!-- JS-результаты будут вставляться сюда -->
+                </div>
+            </div>
+
+        <!-- Текущий день -->
+        <a class="nav-item" href="{% url 'day_detail' selected_day %}">{{ selected_day }}</a>
+
+        <!-- Правая часть -->
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <a class="nav-avatar" href="{% url 'profile' %}">
+                    <img src="{{ user.profile.avatar.url }}" alt="avatar"/>
+                </a>
+                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-logout-btn">
+                        Log Out
+                    </button>
+                </form>
+            {% else %}
+                <a class="nav-item" href="{% url 'login' %}">Enter</a>
+                <a class="nav-item" href="{% url 'signup' %}">SignUp</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+    <script src="{% static 'JS/script.js' %}"></script>
+</body>
+</html>

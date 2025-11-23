@@ -1,0 +1,32 @@
+{% extends 'navigation.html' %}
+{% load tags %}
+{% load static %}
+
+{% block content %}
+    <br>
+    <div class="products_container" style="display: flex; flex-direction: column; height: 90vh; box-sizing: border-box; padding: 0; margin: 0;">
+        <div style="flex: 1; overflow-y: auto;">
+            {% for product in products %}
+                <div class="product_row" style="display: flex; align-items: center; margin-bottom: 5px;">
+                    <a style="font-family: Verdana; font-size: 14px; text-decoration: none" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+            <div class="pagination" style="text-align: center; margin: 10px 0;">
+                {% for page_number in page_obj.paginator.page_range %}
+                    <a
+                        style="font-family: Verdana; font-size: 18px; text-decoration: none;
+                        display: inline-block; width: 40px; height: 40px;
+                        border-radius: 50%; background-color: {% if page_number == page_obj.number %}gray{% else %}lightgray{% endif %};
+                        color: white; line-height: 40px; margin: 0 5px; text-align: center;"
+                        href="?page={{ page_number }}">
+                        {{ page_number }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+<script src="{% static 'JS/reload_page.js' %}"></script>
+{% endblock %}

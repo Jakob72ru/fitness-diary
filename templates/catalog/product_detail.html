@@ -1,0 +1,127 @@
+{% extends 'navigation.html' %}
+{% load static %}
+{% block content %}
+{% load tags %}
+<div class="body-content-product-detail">
+
+    <!-- Левая панель -->
+    <div class="left-panel-product-detail">
+        <div class="products-container">
+            {% for product in products %}
+                <div class="product-row">
+                    <form method="POST" class="d-flex align-items-center gap-2">
+                        {% csrf_token %}
+                        {{ forms|get_item:product.id|safe }}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <button class="btn btn-outline-secondary" type="submit" name="action"
+                                value="add_product">+</button>
+                        <a class="product-link" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Центральная панель -->
+    <div class="center-panel-product-detail">
+
+        <!-- Представление продукта -->
+        <h2>{{ product.title }}</h2>
+        <img src="{{ product.thumbnail.url }}" width="200">
+
+        <!-- Состав продукта -->
+        <h5>Пищевая ценность на 100 г:</h5>
+        <div class="product-summary">
+            <div class="figure-day-detail">
+                <p>Белки</p>
+                <p>{{ product.proteins }}</p>
+            </div>
+            <div class="figure-day-detail">
+                <p>Жиры</p>
+                <p>{{ product.fats }}</p>
+            </div>
+            <div class="figure-day-detail">
+                <p>Углеводы</p>
+                <p>{{ product.carbohydrates }}</p>
+            </div>
+            <div class="figure-day-detail">
+                <p>Ккал</p>
+                <p>{{ product.calories }}</p>
+            </div>
+        </div>
+        <p></p>
+
+        <!-- Добавление и обновление продукта -->
+        <div class="product-manager">
+            <form method="POST" class="d-flex align-items-center gap-2">
+                {% csrf_token %}
+                <button class="btn btn-outline-dark btn-sm product-manager-button" type="submit" name="action"
+                        value="add_product">+</button>
+                <input class="form-control product-manager-input" type="text" name='weight' value="{{ product.weight }}"
+                tabindex="1">
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <button class="btn btn-outline-dark btn-sm product-manager-button" type="submit" name='action'
+                        value="update_product">Обновить</button>
+            </form>
+        </div>
+        <br>
+
+        <!-- Результаты дня -->
+        <h3>{{ day_title }}</h3>
+        <div class="day-summary-product-detail">
+            <div class="figure-day-detail">
+                <p>Белки</p>
+                <p>{{ day.proteins }}</p>
+            </div>
+            <div class="figure-day-detail">
+                <p>Жиры</p>
+                <p>{{ day.fats }}</p>
+            </div>
+            <div class="figure-day-detail">
+                <p>Углеводы</p>
+                <p>{{ day.carbohydrates }}</p>
+            </div>
+            <div class="figure-day-detail">
+                <p>Ккал</p>
+                <p>{{ day.calories }}</p>
+            </div>
+        </div>
+        <br>
+        <!-- Удаление и создание продукта -->
+        <div class="create-delete-product">
+            <form class='delete-product' method="POST">
+                {% csrf_token %}
+                <button class="btn btn-outline-secondary" type="submit" name="action"
+                        value="delete_current_product">Удалить продукт</button>
+            </form>
+            <form class='create-product' method="POST">
+                {% csrf_token %}
+                <button class="btn btn-outline-secondary" type="submit" name="action"
+                        value="create_product">Создать продукт</button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Правая панель -->
+    <div class="right-panel-product-detail">
+        <div class="day-products">
+            {% for day_product in day_products %}
+                <form method="post">
+                    {% csrf_token %}
+                    <span class="day-product-row">
+                        <input type="hidden" name="day_product_id" value="{{ day_product.id }}">
+                        <button class="btn btn-outline-secondary" type="submit" name="action"
+                                value="delete_product">-</button>
+                        <a class="day-product-link" href="{{ day_product.product.get_absolute_url }}">
+                            {{ day_product.product }}</a> {{ day_product.weight }}г {{ day_product.calories }} Ккал
+                    </span>
+                </form>
+            {% endfor %}
+        </div>
+    </div>
+
+
+<script src="{% static 'JS/reload_page.js' %}"></script>
+</div>
+{% endblock %}

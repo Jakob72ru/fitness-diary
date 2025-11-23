@@ -1,0 +1,121 @@
+{% extends 'navigation.html' %}
+{% load tags %}
+{% load static %}
+
+{% block content %}
+<div class="body-content">
+    <div class="left-panel">
+        <div class="left-text">
+
+            <!-- блок переключения месяца -->
+            <div class="month-selector">
+                <a class="selector-left" href="?{{ month|get_previous_month:year }}">
+                    <span>{{ previous_month }}</span></a>
+                <span class="selector-center">{{ month_title }} {{ year }}</span>
+                <a class="selector-right" href="?{{ month|get_next_month:year }}">{{ next_month }}</a>
+            </div>
+
+            <!-- блок результатов -->
+            <div class="month-results">
+                <div class="my-figure">
+                    <p>Белки</p>
+                    <p>{{ results.proteins }}</p>
+                </div>
+                <div class="my-figure">
+                    <p>Жиры</p>
+                    <p>{{ results.fats }}</p>
+                </div>
+                <div class="my-figure">
+                    <p>Углеводы</p>
+                    <p>{{ results.carbohydrates }}</p>
+                </div>
+                <div class="my-figure">
+                    <p>Ккал</p>
+                    <p>{{ results.calories }}</p>
+                </div>
+                <div class="my-figure">
+                    <p>Вес</p>
+                    <p>{{ results.user_weight }}</p>
+                </div>
+            </div>
+            <br>
+
+            <!-- блок выбора периода -->
+            <div class="button-results">
+                <form action="{% url 'main' selected_day %}" method="post" class="period-form"
+                      data-period="selected_month">
+                    {% csrf_token %}
+                    <input type="hidden" name="period" value="selected_month">
+                    <button type="submit" class="btn btn-outline-dark period-btn
+                    {% if active_period == 'selected_month' %}active{% endif %}">Текущий месяц</button>
+                    </form>
+                <form action="{% url 'main' selected_day %}" method="post" class="period-form"
+                      data-period="last_30_days">
+                    {% csrf_token %}
+                    <input type="hidden" name="period" value="last_30_days">
+                    <button type="submit" class="btn btn-outline-dark period-btn
+                    {% if active_period == 'last_30_days' %}active{% endif %}">Последние 30 дней</button>
+                </form>
+                <form action="{% url 'main' selected_day %}" method="post" class="period-form"
+                      data-period="last_365_days">
+                    {% csrf_token %}
+                    <input type="hidden" name="period" value="last_365_days">
+                    <button type="submit" class="btn btn-outline-dark period-btn
+                    {% if active_period == 'last_365_days' %}active{% endif %}">Последний год</button>
+                </form>
+            </div>
+            <br>
+
+            <!-- блок графика -->
+            <div class="results-graphic">
+                <img src="{% url 'chart_image' %}?month={{ month }}&year={{ year }}&period={{ period }}" height="360">
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="right-panel">
+
+        <!-- Блок календаря -->
+        <table class="month-table">
+            <tbody>
+                <tr>
+                    <td class="table-head-element">Пн</td>
+                    <td class="table-head-element">Вт</td>
+                    <td class="table-head-element">Ср</td>
+                    <td class="table-head-element">Чт</td>
+                    <td class="table-head-element">Пт</td>
+                    <td class="table-head-element">Сб</td>
+                    <td class="table-head-element">Вс</td>
+                </tr>
+                {% for week in month_cal %}
+                <tr>
+                    {% for day in week %}
+                        <td class="table-element">
+                            {% if day > 0 %}
+                                {% with day_instance=days|get_item:day %}
+                                    <a class="table-element-link" href="{{ day_instance.get_absolute_url }}">
+                                        <div class="cell-content">
+                                            <span>{{ day }}</span>
+                                            {% if day_instance.calories > 0 %}
+                                                <span class="table-element-text">
+                                                    {{ day_instance.calories|floatformat:0 }}</span>
+                                            {% endif %}
+                                            {% if day_instance.user_weight > 0 %}
+                                                <span class="table-element-text">
+                                                    {{ day_instance.user_weight }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </a>
+                                {% endwith %}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="{% static 'JS/reload_page.js' %}"></script>
+<script src="{% static 'JS/script.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "navigation.html" %}
+{% load static %}
+{% block title %}Profile Page{% endblock title %}
+{% block content %}
+
+<div class="body-content-create-product">
+  <div class="create-form">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="row g-2 align-items-center justify-content-end mb-2">
+          <div class="col-auto">
+            <label class="form-label mb-0 me-2">{{ field.label }}</label>
+          </div>
+          <div class="col-auto">
+            {{ field }}
+          </div>
+        </div>
+      {% endfor %}
+      <button class="btn btn-outline-dark btn-lg" type="submit" name="action" value="save_product">сохранить</button>
+    </form>
+  </div>
+
+  <!-- Заглушка нового продукта -->
+  <div class="product-image">
+    <h2>Новый профиль</h2>
+    <img src="\media\profile_images\default_user.webp" width="400">
+  </div>
+</div>
+
+
+<script src="{% static 'JS/reload_page.js' %}"></script>
+{% endblock content %}

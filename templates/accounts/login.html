@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log in - Fitness Diary</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" href="{% static 'fd4.ico' %}">
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+    <div class="body-content-login">
+        <img src="{% static 'logo.png' %}" width="1000" height="130">
+        <div class="login-signin">
+            <h1> Log in </h1>
+            <a href="{% url 'signup' %}">Sign up</a>
+        </div>
+        <form class="signup-form" method="post">
+            <div class="login-form-inputs">
+                {% csrf_token %}
+                <!-- Поле username -->
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">Username</span>
+                    <input type="text"
+                           name="{{ form.username.name }}"
+                           class="form-control"
+                           placeholder="Username"
+                           aria-label="Username"
+                           aria-describedby="basic-addon1"
+                           value="{{ form.username.value|default:'' }}"
+                           tabindex="1">
+                </div>
+
+                <!-- Поле password -->
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon2">Password</span>
+                    <input type="password"
+                           name="{{ form.password.name }}"
+                           class="form-control"
+                           placeholder="Password"
+                           aria-label="Password"
+                           aria-describedby="basic-addon2"
+                           tabindex="1">
+                </div>
+            </div>
+
+            <div class="attentions">
+                <!-- Вывод ошибок формы -->
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Вывод ошибок для конкретных полей -->
+                {% if form.username.errors %}
+                <div class="alert alert-warning">{% for error in form.username.errors %} {{ error }} {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if form.password.errors %}
+                <div class="alert alert-warning">{% for error in form.password.errors %} {{ error }} {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="login-form-button">
+                <input type="submit" class="btn btn-outline-dark login-form-button" value="Log in" tabindex="1">
+            </div>
+        </form>
+    </div>
+    <br>
+    <div class="alt-logins">
+            <a href="{% url 'password_reset' %}">
+                <img class='login-img'src="{% static 'mailru.png' %}" title="Сброс пароля">
+            </a>
+            <a href="{% url 'social:begin' 'github' %}">
+                <img class='login-img'src="{% static 'github.png' %}" title="Войти с GitHub">
+            </a>
+            <a href="{% url 'social:begin' 'google-oauth2' %}">
+                <img class='login-img'src="{% static 'google.png' %}" title="Войти с Google">
+            </a>
+    </div>
+
+    <!-- Вывод сообщения об успешной авторизации -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <script src="{% static 'JS/reload_page.js' %}"></script>
+</body>
